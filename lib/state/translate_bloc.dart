@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../model/translate.dart';
 import '../repositories/search_repository.dart';
 
 part 'translate_event.dart';
@@ -13,7 +14,8 @@ class TranslateBloc extends Bloc<TranslateEvent, TranslateState> {
       emit(TranslateInitial());
       print('TranslateInitial emitted');
       try {
-        final translatedText = await searchRepositoryImpl.searchWord();
+        final translatedText =
+            await searchRepositoryImpl.searchWord(event.translate);
         emit(TranslatedText(translatedText: translatedText));
         print('TranslatedText emitted');
       } catch (e) {

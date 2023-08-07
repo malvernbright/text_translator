@@ -5,6 +5,9 @@ abstract class TranslateEvent extends Equatable {
 }
 
 class TranslateText extends TranslateEvent {
+  final Translate translate;
+
+  const TranslateText(this.translate);
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [translate];
 }

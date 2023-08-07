@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 
+import '../model/translate.dart';
 import '../utils/constants.dart';
 
 abstract class SearchRepository {
-  Future<String> searchWord();
+  Future<String> searchWord(Translate translate);
 }
 
 class SearchRepositoryImpl implements SearchRepository {
@@ -16,25 +19,18 @@ class SearchRepositoryImpl implements SearchRepository {
   ///  }
   ///
   @override
-  Future<String> searchWord() async {
-    var url = Uri.https(
-      Constants.trUrl,
-    );
-    var body = {
-      "input_text": "furaha ya kuzaliwa dada yangu mpendwa",
-      "from_lang": "swahili",
-      "to_lang": "en"
-    };
+  Future<String> searchWord(Translate translate) async {
+    var url = Uri.https(Constants.trUrl, '/translate/');
     var response = await http.post(
       url,
-      body: body,
+      body: jsonEncode(translate.toJson()),
       headers: {
         'Accept': '*/*',
-        'referer': 'https://d349-197-211-240-197.ngrok-free.app'
       },
     );
     print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-    return response.toString();
+    var data = jsonDecode(response.body);
+    print(data['data']);
+    return data['data'];
   }
 }
