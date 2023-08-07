@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import 'repositories/search_repository.dart';
 import 'screen/home_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // checkPermission();
+  MobileAds.instance.initialize();
   runApp(
     RepositoryProvider(
       create: (context) => SearchRepositoryImpl(),

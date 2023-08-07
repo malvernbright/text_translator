@@ -20,7 +20,7 @@ class SearchRepositoryImpl implements SearchRepository {
   ///
   @override
   Future<String> searchWord(Translate translate) async {
-    var url = Uri.https(Constants.trUrl, '/translate/');
+    var url = Uri.https(Constants.kTrUrl, '/translate/');
     var response = await http.post(
       url,
       body: jsonEncode(translate.toJson()),

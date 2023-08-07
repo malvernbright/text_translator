@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:text_translator/model/translate.dart';
+import 'package:text_translator/utils/ad_helper.dart';
 import 'package:text_translator/utils/constants.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../repositories/search_repository.dart';
@@ -17,9 +19,42 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _textController = TextEditingController();
-  List<String> languages = Constants.languages;
-  String fromDropdownValue = Constants.languages.first;
-  String toDropdownValue = Constants.languages.first;
+  List<String> languages = Constants.kLanguages;
+  String fromDropdownValue = Constants.kLanguages.first;
+  String toDropdownValue = Constants.kLanguages.first;
+
+  late BannerAd _bottomBannerAd;
+
+  bool _isBottomBannerAdLoaded = false;
+
+  void _createBottomBabberAd() {
+    _bottomBannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: AdHelper.bannerAdUnitId,
+      listener: BannerAdListener(onAdLoaded: (_) {
+        setState(() {
+          _isBottomBannerAdLoaded = true;
+        });
+      }, onAdFailedToLoad: (ad, error) {
+        ad.dispose();
+      }),
+      request: const AdRequest(),
+    );
+    _bottomBannerAd.load();
+  }
+
+  @override
+  void initState() {
+    _createBottomBabberAd();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _bottomBannerAd.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -53,6 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 TextField(
+                                  maxLength: 50,
+                                  maxLines: 2,
                                   controller: _textController,
                                   decoration: const InputDecoration(
                                     hintText: 'Translation text',
@@ -144,6 +181,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+        bottomNavigationBar: _isBottomBannerAdLoaded
+            ? Container(
+                height: _bottomBannerAd.size.height.toDouble(),
+                width: _bottomBannerAd.size.width.toDouble(),
+                child: AdWidget(ad: _bottomBannerAd),
+              )
+            : null,
       ),
     );
   }
